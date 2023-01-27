@@ -1,12 +1,22 @@
 package com.example.health_tracker;
 
+import java.util.ArrayList;
+
 public class User {
-    private enum GOALS {
+    public enum GOALS {
         STEPS, WATER, CALORIES
     }
-    private int[] goalsValues = new int[GOALS.values().length];
+    private ArrayList<Integer> goalsValues = new ArrayList<>(GOALS.values().length);
+
+    public User() {
+        this.goalsValues.set(1, 2200);
+    }
 
     public void setGoalValue(GOALS goal, int goalValue) {
-        goalsValues[goal.ordinal()] = goalValue;
+        goalsValues.set(goal.ordinal(), goalValue);
+    }
+
+    public int getGoalValue(GOALS goal){
+        return goalsValues.get(goal.ordinal());
     }
 }
