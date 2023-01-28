@@ -1,9 +1,10 @@
 package com.example.health_tracker;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.health_tracker.health_managers.WaterManager.CUP_TYPE;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.health_tracker.databinding.ActivityMainBinding;
 import com.example.health_tracker.health_managers.WaterManager;
@@ -20,9 +21,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         updateManagers();
+
         binding.addCup.setOnClickListener(v -> {
-            waterManager.addCup(WaterManager.CUP_TYPE.MEDIUM_CUP);
+            waterManager.addCup(CUP_TYPE.MEDIUM_CUP);
             updateManagers();
+        });
+
+        binding.btnSettings.setOnClickListener(v -> {
+
         });
     }
 
