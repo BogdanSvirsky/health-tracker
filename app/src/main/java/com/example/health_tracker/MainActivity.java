@@ -1,22 +1,21 @@
 package com.example.health_tracker;
 
-import com.example.health_tracker.databinding.CupsFragmentBinding;
-import com.example.health_tracker.fragments.CupsFragment;
-import com.example.health_tracker.health_managers.WaterManager.CUP_TYPE;
-
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.health_tracker.databinding.ActivityMainBinding;
 import com.example.health_tracker.health_managers.WaterManager;
+import com.example.health_tracker.widgets.StepsWidget;
 
 public class MainActivity extends AppCompatActivity {
+    private SensorManager sensorManager;
+    private Sensor stepsCounter;
     private ActivityMainBinding binding;
-    private final User user = new User();
     private final WaterManager waterManager = new WaterManager();
-    private boolean isCupsFragmentOpened = false;
-    private CupsFragment cupsFragment;
+    private final StepsWidget stepsWidget = new StepsWidget(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,35 +23,25 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        cupsFragment = new CupsFragment(waterManager);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        stepsCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER, true);
 
         updateManagers();
-
-        binding.addCup.setOnClickListener(v -> {
-            waterManager.addCup(CUP_TYPE.MEDIUM_CUP);
-            updateManagers();
-        });
-
-
-
-        binding.btnSettings.setOnClickListener(v -> {
-            if (isCupsFragmentOpened){
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .remove(cupsFragment)
-                        .commitNow();
-            } else {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.rootContainer, cupsFragment)
-                        .commitNow();
-            }
-        });
     }
 
-    private void updateManagers() {
-        binding.waterProgress.setMax(user.getGoalValue(User.GOALS.WATER));
-        binding.textWaterAmount.setText("Выпито воды: " +
-                waterManager.getTodayVolume() + user.getGoalValue(User.GOALS.WATER) + " ml");
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(
+                stepsWidget, stepsCounter, SensorManager.SENSOR_DELAY_NORMAL
+        );
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(stepsWidget);
+    }
+
+    private void updateManagers() {}
 }
