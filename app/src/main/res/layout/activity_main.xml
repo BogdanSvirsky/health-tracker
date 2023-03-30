@@ -8,39 +8,4 @@
     android:padding="10dp"
     android:id="@+id/rootContainer">
 
-    <ProgressBar
-        android:id="@+id/waterProgress"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="101dp" />
-
-    <TextView
-        android:id="@+id/textWaterAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Выпито воды: 0 / 2200 ml"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
-        <Button
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/addCup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:text="Добавить стакан +"/>
-
-        <ImageButton
-            android:id="@+id/btnSettings"
-            android:layout_width="60dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_settings_btn"
-            android:background="@color/design_default_color_background"
-            android:scaleType="fitCenter"/>
-    </LinearLayout>
 </LinearLayout>
