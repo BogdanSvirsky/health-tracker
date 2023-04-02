@@ -20,4 +20,10 @@ public class SharedPreferencesManager {
     public int getMLsCount() {
         return sharedPreferences.getInt(MLs_KEY, 0);
     }
+
+    public void reset() {
+        sharedPreferences.edit()
+                .putInt(MLs_KEY, 0)
+                .apply();
+    }
 }

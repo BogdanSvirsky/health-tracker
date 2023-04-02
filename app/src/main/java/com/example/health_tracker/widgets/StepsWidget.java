@@ -28,7 +28,7 @@ public class StepsWidget extends CardView implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         int countSteps = (int) sensorEvent.values[0];
-        binding.txtCountSteps.setText(countSteps + ""); // TODO: sensor give strange step's count
+        binding.txtCountSteps.setText(countSteps + ""); // TODO: sensor gives strange step's count
         binding.txtCountKMs.setText("это " + countSteps / 1450 + " км");
         binding.txtPercents.setText((countSteps / goal) * 100 + "%");
         binding.progressBar.setProgress((countSteps / goal) * 100);
