@@ -27,7 +27,7 @@
                 android:textSize="32dp" />
 
             <TextView
-                android:id="@+id/txtCountSteps"
+                android:id="@+id/txtCountMLs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="bottom"
@@ -48,6 +48,7 @@
                     android:textSize="12dp"/>
 
                 <ImageButton
+                    android:id="@+id/btnSettings"
                     android:layout_width="28dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

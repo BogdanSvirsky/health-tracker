@@ -12,7 +12,7 @@ import com.example.health_tracker.databinding.WaterWidgetBinding;
 
 public class WaterWidget extends CardView {
     private WaterWidgetBinding binding;
-    private int goal, currentMLs = 0;
+    private float goal = 2200, currentMLs = 0;
     private enum Cups {SmallCup, MediumCup, LargeCup}
     private Cups currentCup = Cups.MediumCup;
     private SharedPreferencesManager sharedPreferencesManager;
@@ -29,12 +29,25 @@ public class WaterWidget extends CardView {
                 case MediumCup:
                     currentMLs += 200;
                     sharedPreferencesManager.saveMLsCount(200);
+                    update();
                     break;
             }
+        });
+
+        binding.btnSettings.setOnClickListener(v -> {
+            sharedPreferencesManager.reset();
+            update();
         });
     }
 
     public void setGoal(int goal) {
         this.goal = goal;
+    }
+
+    public void update() {
+        currentMLs = sharedPreferencesManager.getMLsCount();
+        binding.txtCountMLs.setText((int) currentMLs + "");
+        binding.txtPercents.setText(String.format("%.1f", (currentMLs / goal) * 100) + "%");
+        binding.progressBar.setProgress((int) ((currentMLs / goal) * 100));
     }
 }

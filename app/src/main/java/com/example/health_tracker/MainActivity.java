@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         sensorManager.registerListener(
                 stepsWidget, stepsSensor, SensorManager.SENSOR_DELAY_NORMAL
         );
+        waterWidget.update();
     }
 
     @Override
