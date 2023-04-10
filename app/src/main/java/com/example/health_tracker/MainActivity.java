@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
         waterWidget = new WaterWidget(this, sharedPreferencesManager);
         binding.rootContainer.addView(stepsWidget);
         binding.rootContainer.addView(waterWidget);
+
+        sharedPreferencesManager.reset(); // debug
     }
 
     @Override
