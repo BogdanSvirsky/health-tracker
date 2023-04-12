@@ -58,7 +58,7 @@ public class WaterWidget extends CardView {
         binding.btnSettings.setOnClickListener(v -> {
             binding.scroll.setVisibility((isVisible)? VISIBLE: GONE);
             isVisible = !isVisible;
-            binding.radioGroup.check(binding.radioGroup.getChildAt(currentCup).getId());
+            update();
         });
 
         binding.scroll.setVisibility(GONE);
@@ -78,9 +78,10 @@ public class WaterWidget extends CardView {
         binding.radioGroup.removeAllViews();
         for (int cup: cups) {
             RadioButton radioButton = new RadioButton(getContext());
-            radioButton.setText(String.valueOf(cup));
+            radioButton.setText(cup + " ml");
             binding.radioGroup.addView(radioButton);
         }
+        binding.radioGroup.check(binding.radioGroup.getChildAt(currentCup).getId());
     }
 
     private void addNewCup() {

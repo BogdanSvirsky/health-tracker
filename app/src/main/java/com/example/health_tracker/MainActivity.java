@@ -19,10 +19,12 @@ import com.example.health_tracker.widgets.WaterWidget;
 public class MainActivity extends AppCompatActivity {
     private SensorManager sensorManager;
     private Sensor stepsSensor;
+    private Sensor stepsDetectorSensor;
     private ActivityMainBinding binding;
     private StepsWidget stepsWidget;
     private WaterWidget waterWidget;
     private SharedPreferencesManager sharedPreferencesManager;
+    private StepsCounterService stepsCounterService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 "SENSOR MANAGER IS " + ((sensorManager == null) ? "NULL" : "NOT NULL")
         );
         stepsSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        stepsDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         if (stepsSensor == null) {
             Log.d("SENSOR", "SENSOR IS NULL");
 
@@ -49,6 +52,15 @@ public class MainActivity extends AppCompatActivity {
             Log.d("SENSOR", "SENSOR WAKED UP");
             sensorManager.registerListener(
                     stepsWidget, stepsSensor, SensorManager.SENSOR_DELAY_NORMAL
+            );
+        }
+        if (stepsDetectorSensor == null) {
+            Log.d("SENSOR", "SENSOR IS NULL");
+
+        } else {
+            Log.d("SENSOR", "SENSOR WAKED UP");
+            sensorManager.registerListener(
+                    stepsCounterService, stepsDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL
             );
         }
 
@@ -70,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
         sensorManager.registerListener(
                 stepsWidget, stepsSensor, SensorManager.SENSOR_DELAY_NORMAL
         );
+        sensorManager.registerListener(
+                stepsCounterService, stepsDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL
+        );
         waterWidget.update();
     }
 
@@ -77,5 +92,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(stepsWidget);
+        sensorManager.unregisterListener(stepsCounterService);
     }
 }
