@@ -12,7 +12,13 @@ import androidx.annotation.Nullable;
 
 public class StepsCounterService extends Service implements SensorEventListener {
     private int currentCountOfSteps;
-    
+    private SharedPreferencesManager sharedPrefsManager;
+    private final Binder binder = new LocalBinder();
+
+    public StepsCounterService(SharedPreferencesManager sharedPreferencesManager) {
+        this.sharedPrefsManager = sharedPreferencesManager;
+    }
+
     public class LocalBinder extends Binder {
         LocalBinder getService() {
             return LocalBinder.this;
@@ -21,13 +27,13 @@ public class StepsCounterService extends Service implements SensorEventListener 
 
     @Override
     public void onCreate() {
-        currentCountOfSteps = 0; // TODO: create a load from shared preferences
+        currentCountOfSteps = sharedPrefsManager.getStepsCount();
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
     }
 
     @Override
@@ -36,7 +42,17 @@ public class StepsCounterService extends Service implements SensorEventListener 
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
+    public void onAccuracyChanged(Sensor sensor, int i) {}
 
+    public int getCurrentCountOfSteps() {
+        return currentCountOfSteps;
+    }
+
+    public void saveStepsCount() {
+        sharedPrefsManager.saveStepsCount(currentCountOfSteps);
+    }
+
+    public void update() {
+        currentCountOfSteps = sharedPrefsManager.getStepsCount(); // TODO: throw null pointer exception
     }
 }

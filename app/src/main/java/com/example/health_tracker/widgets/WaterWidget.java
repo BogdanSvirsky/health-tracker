@@ -64,6 +64,8 @@ public class WaterWidget extends CardView {
         binding.scroll.setVisibility(GONE);
 
         binding.btnAddNewCup.setOnClickListener(v -> addNewCup());
+
+        update();
     }
 
     public void setGoal(int goal) {

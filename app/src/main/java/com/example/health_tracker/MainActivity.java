@@ -18,7 +18,6 @@ import com.example.health_tracker.widgets.WaterWidget;
 
 public class MainActivity extends AppCompatActivity {
     private SensorManager sensorManager;
-    private Sensor stepsSensor;
     private Sensor stepsDetectorSensor;
     private ActivityMainBinding binding;
     private StepsWidget stepsWidget;
@@ -32,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        stepsCounterService = new StepsCounterService(sharedPreferencesManager);
+
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED) {
             requestPermissions(
@@ -43,20 +44,9 @@ public class MainActivity extends AppCompatActivity {
                 "SENSOR",
                 "SENSOR MANAGER IS " + ((sensorManager == null) ? "NULL" : "NOT NULL")
         );
-        stepsSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         stepsDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-        if (stepsSensor == null) {
-            Log.d("SENSOR", "SENSOR IS NULL");
-
-        } else {
-            Log.d("SENSOR", "SENSOR WAKED UP");
-            sensorManager.registerListener(
-                    stepsWidget, stepsSensor, SensorManager.SENSOR_DELAY_NORMAL
-            );
-        }
         if (stepsDetectorSensor == null) {
             Log.d("SENSOR", "SENSOR IS NULL");
-
         } else {
             Log.d("SENSOR", "SENSOR WAKED UP");
             sensorManager.registerListener(
@@ -68,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 "HEALTH TRACKER PREFERENCES", MODE_PRIVATE
         ));
 
-        stepsWidget = new StepsWidget(this);
+        stepsWidget = new StepsWidget(this, stepsCounterService);
         waterWidget = new WaterWidget(this, sharedPreferencesManager);
         binding.rootContainer.addView(stepsWidget);
         binding.rootContainer.addView(waterWidget);
@@ -80,18 +70,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(
-                stepsWidget, stepsSensor, SensorManager.SENSOR_DELAY_NORMAL
-        );
-        sensorManager.registerListener(
                 stepsCounterService, stepsDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL
         );
         waterWidget.update();
+        stepsCounterService.update();
+        stepsWidget.update();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(stepsWidget);
         sensorManager.unregisterListener(stepsCounterService);
+        stepsCounterService.saveStepsCount();
     }
 }
