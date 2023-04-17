@@ -5,54 +5,43 @@ import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.os.Binder;
 import android.os.IBinder;
 
-import androidx.annotation.Nullable;
+import com.example.health_tracker.singletones.SharedPreferencesModule;
 
 public class StepsCounterService extends Service implements SensorEventListener {
-    private int currentCountOfSteps;
-    private SharedPreferencesManager sharedPrefsManager;
-    private final Binder binder = new LocalBinder();
+    private int currentStepsCount;
+    private final SharedPreferencesManager sharedPreferencesManager =
+            SharedPreferencesModule.getSharedPreferencesManager();
 
-    public StepsCounterService(SharedPreferencesManager sharedPreferencesManager) {
-        this.sharedPrefsManager = sharedPreferencesManager;
-    }
-
-    public class LocalBinder extends Binder {
-        LocalBinder getService() {
-            return LocalBinder.this;
-        }
+    public StepsCounterService() {
     }
 
     @Override
-    public void onCreate() {
-        currentCountOfSteps = sharedPrefsManager.getStepsCount();
+    public void onDestroy() {
+        sharedPreferencesManager.saveStepsCount(currentStepsCount);
     }
 
-    @Nullable
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        currentStepsCount = sharedPreferencesManager.getStepsCount();
+        return START_STICKY;
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
-        return binder;
+        return null;
     }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        currentCountOfSteps++;
+        currentStepsCount += sensorEvent.values.length;
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {}
 
-    public int getCurrentCountOfSteps() {
-        return currentCountOfSteps;
-    }
-
-    public void saveStepsCount() {
-        sharedPrefsManager.saveStepsCount(currentCountOfSteps);
-    }
-
-    public void update() {
-        currentCountOfSteps = sharedPrefsManager.getStepsCount(); // TODO: throw null pointer exception
+    public int getCurrentStepsCount() {
+        return currentStepsCount;
     }
 }

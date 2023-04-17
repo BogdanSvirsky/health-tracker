@@ -5,65 +5,64 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 
 import com.example.health_tracker.SharedPreferencesManager;
-import com.example.health_tracker.databinding.WaterWidgetBinding;
+import com.example.health_tracker.databinding.WaterWidgetBottomBinding;
+import com.example.health_tracker.databinding.WaterWidgetStartBinding;
+import com.example.health_tracker.singletones.SharedPreferencesModule;
 
 import java.util.ArrayList;
 
-public class WaterWidget extends CardView {
-    private WaterWidgetBinding binding;
+public class WaterWidget extends BaseWidget {
+    private final WaterWidgetStartBinding startBinding;
+    private final WaterWidgetBottomBinding bottomBinding;
     private float goal = 2200, currentMLs = 0;
     private ArrayList<Integer> cups = new ArrayList<>();
     private int currentCup = 1;
-    private SharedPreferencesManager sharedPreferencesManager;
+    private final SharedPreferencesManager sharedPreferencesManager = SharedPreferencesModule.getSharedPreferencesManager();
     private boolean isVisible = false;
     private AlertDialog.Builder builder;
 
-    public WaterWidget(
-            @NonNull Context context, SharedPreferencesManager sharedPreferencesManager
-    ) {
+    public WaterWidget(@NonNull Context context) {
         super(context);
-        binding = WaterWidgetBinding.inflate(LayoutInflater.from(context), this);
-        this.sharedPreferencesManager = sharedPreferencesManager;
+        startBinding = WaterWidgetStartBinding.inflate(LayoutInflater.from(context), baseBinding.startContent, true);
+        bottomBinding = WaterWidgetBottomBinding.inflate(LayoutInflater.from(context), baseBinding.bottomContent, true);
 
         cups.add(200);
         cups.add(300);
         cups.add(400);
 
-        binding.addCup.setOnClickListener(v -> {
+        startBinding.addCup.setOnClickListener(v -> {
             currentMLs += cups.get(currentCup);
             sharedPreferencesManager.saveMLsCount(cups.get(currentCup));
             update();
         });
 
-        binding.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        bottomBinding.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                currentCup = (int) binding.radioGroup.indexOfChild(
-                        findViewById(binding.radioGroup.getCheckedRadioButtonId())
+                currentCup = (int) bottomBinding.radioGroup.indexOfChild(
+                        findViewById(bottomBinding.radioGroup.getCheckedRadioButtonId())
                 );
 
                 Log.d("WATER WIDGET", i + "");
             }
         });
 
-        binding.btnSettings.setOnClickListener(v -> {
-            binding.scroll.setVisibility((isVisible)? VISIBLE: GONE);
+        startBinding.btnSettings.setOnClickListener(v -> {
+            bottomBinding.scrollContent.setVisibility((isVisible)? VISIBLE: GONE);
             isVisible = !isVisible;
             update();
         });
 
-        binding.scroll.setVisibility(GONE);
+        bottomBinding.scrollContent.setVisibility(GONE);
 
-        binding.btnAddNewCup.setOnClickListener(v -> addNewCup());
+        bottomBinding.btnAddNewCup.setOnClickListener(v -> addNewCup());
 
         update();
     }
@@ -74,16 +73,16 @@ public class WaterWidget extends CardView {
 
     public void update() {
         currentMLs = sharedPreferencesManager.getMLsCount();
-        binding.txtCountMLs.setText((int) currentMLs + "");
-        binding.txtPercents.setText(String.format("%.1f", (currentMLs / goal) * 100) + "%");
-        binding.progressBar.setProgress((int) ((currentMLs / goal) * 100));
-        binding.radioGroup.removeAllViews();
+        startBinding.txtCountMLs.setText((int) currentMLs + "");
+        baseBinding.txtPercents.setText(String.format("%.1f", (currentMLs / goal) * 100) + "%");
+        baseBinding.progressBar.setProgress((int) ((currentMLs / goal) * 100));
+        bottomBinding.radioGroup.removeAllViews();
         for (int cup: cups) {
             RadioButton radioButton = new RadioButton(getContext());
             radioButton.setText(cup + " ml");
-            binding.radioGroup.addView(radioButton);
+            bottomBinding.radioGroup.addView(radioButton);
         }
-        binding.radioGroup.check(binding.radioGroup.getChildAt(currentCup).getId());
+        bottomBinding.radioGroup.check(bottomBinding.radioGroup.getChildAt(currentCup).getId());
     }
 
     private void addNewCup() {

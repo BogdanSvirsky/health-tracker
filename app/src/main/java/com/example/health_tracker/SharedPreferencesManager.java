@@ -1,5 +1,8 @@
 package com.example.health_tracker;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SharedPreferencesManager {
@@ -8,8 +11,11 @@ public class SharedPreferencesManager {
             STEPS_KEY = "COUNT_STEPS";
     private SharedPreferences sharedPreferences;
 
-    public SharedPreferencesManager(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
+    public SharedPreferencesManager(Context context) {
+        sharedPreferences = context.getSharedPreferences(
+                "HEALTH TRACKER PREFERENCES",
+                MODE_PRIVATE
+        );
     }
 
     public void saveMLsCount(int countMLs) {
