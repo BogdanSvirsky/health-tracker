@@ -4,11 +4,13 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class SharedPreferencesManager {
     private final String
             MLs_KEY = "COUNT_MLs",
-            STEPS_KEY = "COUNT_STEPS";
+            STEPS_KEY = "COUNT_STEPS",
+            SENSOR_KEY = "SENSOR";
     private SharedPreferences sharedPreferences;
 
     public SharedPreferencesManager(Context context) {
@@ -46,5 +48,16 @@ public class SharedPreferencesManager {
         sharedPreferences.edit()
                 .putInt(STEPS_KEY, 0)
                 .apply();
+    }
+
+    public void setSensorStatus(boolean isRunning) {
+        sharedPreferences.edit()
+                .putBoolean(SENSOR_KEY, isRunning)
+                .apply();
+        Log.d("SENSOR", (isRunning)? "WORK": "STOPPED");
+    }
+
+    public boolean getSensorStatus() {
+        return sharedPreferences.getBoolean(SENSOR_KEY, false);
     }
 }

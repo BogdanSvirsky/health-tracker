@@ -1,6 +1,7 @@
 package com.example.health_tracker;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -16,13 +17,10 @@ import com.example.health_tracker.widgets.StepsWidget;
 import com.example.health_tracker.widgets.WaterWidget;
 
 public class MainActivity extends AppCompatActivity {
-    private SensorManager sensorManager;
-    private Sensor stepsDetectorSensor;
     private ActivityMainBinding binding;
     private StepsWidget stepsWidget;
     private WaterWidget waterWidget;
     private final SharedPreferencesManager sharedPreferencesManager = SharedPreferencesModule.getSharedPreferencesManager();
-    private StepsCounterService stepsCounterService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +28,10 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        stepsCounterService = new StepsCounterService();
+        if (!sharedPreferencesManager.getSensorStatus()) {
+            startService(new Intent(this, StepsCounterService.class));
+            sharedPreferencesManager.setSensorStatus(true);
+        }
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED) {
@@ -38,22 +39,8 @@ public class MainActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 101
             );
         }
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        Log.d(
-                "SENSOR",
-                "SENSOR MANAGER IS " + ((sensorManager == null) ? "NULL" : "NOT NULL")
-        );
-        stepsDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-        if (stepsDetectorSensor == null) {
-            Log.d("SENSOR", "SENSOR IS NULL");
-        } else {
-            Log.d("SENSOR", "SENSOR WAKED UP");
-            sensorManager.registerListener(
-                    stepsCounterService, stepsDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL
-            );
-        }
 
-        stepsWidget = new StepsWidget(this, stepsCounterService);
+        stepsWidget = new StepsWidget(this);
         waterWidget = new WaterWidget(this);
         binding.rootContainer.addView(stepsWidget);
         binding.rootContainer.addView(waterWidget);
@@ -64,9 +51,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(
-                stepsCounterService, stepsDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL
-        );
+
         stepsWidget.update();
         waterWidget.update();
     }
@@ -74,6 +59,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(stepsCounterService);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, StepsCounterService.class)); // debug
+        sharedPreferencesManager.setSensorStatus(false);
     }
 }
