@@ -8,6 +8,7 @@ import android.util.Log;
 
 public class SharedPreferencesManager {
     private final String
+            CALORIES_KEY = "COUNT_CALORIES",
             MLs_KEY = "COUNT_MLs",
             STEPS_KEY = "COUNT_STEPS",
             SENSOR_KEY = "SENSOR";
@@ -48,16 +49,29 @@ public class SharedPreferencesManager {
         sharedPreferences.edit()
                 .putInt(STEPS_KEY, 0)
                 .apply();
+        sharedPreferences.edit()
+                .putInt(CALORIES_KEY, 0)
+                .apply();
     }
 
     public void setSensorStatus(boolean isRunning) {
         sharedPreferences.edit()
                 .putBoolean(SENSOR_KEY, isRunning)
                 .apply();
-        Log.d("SENSOR", (isRunning)? "WORK": "STOPPED");
+        Log.d("SENSOR", (isRunning) ? "WORK" : "STOPPED");
     }
 
     public boolean getSensorStatus() {
         return sharedPreferences.getBoolean(SENSOR_KEY, false);
+    }
+
+    public void saveCaloriesCount(int caloriesCount) {
+        sharedPreferences.edit()
+                .putInt(CALORIES_KEY, caloriesCount)
+                .apply();
+    }
+
+    public int getCaloriesCount() {
+        return sharedPreferences.getInt(CALORIES_KEY, 0);
     }
 }

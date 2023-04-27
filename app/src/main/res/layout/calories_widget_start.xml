@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingStart="10dp">
 
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Вы выпили"
+        android:text="Вы употребили"
         android:textColor="@color/black"
         android:textSize="32dp" />
 
     <TextView
-        android:id="@+id/txtCountMLs"
+        android:id="@+id/txtCountCalories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="bottom"
@@ -27,28 +25,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:text="миллилитров"
-        android:paddingStart="4dp"/>
+        android:paddingStart="4dp"
+        android:text="каллорий" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/addCalories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/addCup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Добавить стакан +"
-            android:textSize="12dp" />
-
-        <ImageButton
-            android:id="@+id/btnSettings"
-            android:layout_width="44dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:background="@color/design_default_color_background"
-            android:src="@drawable/ic_settings_btn" />
-
-    </LinearLayout>
+        android:text="Добавить запись +"
+        android:textSize="12dp" />
 </LinearLayout>

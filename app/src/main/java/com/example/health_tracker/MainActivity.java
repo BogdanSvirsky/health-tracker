@@ -3,23 +3,23 @@ package com.example.health_tracker;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.health_tracker.databinding.ActivityMainBinding;
 import com.example.health_tracker.singletones.SharedPreferencesModule;
-import com.example.health_tracker.widgets.StepsWidget;
-import com.example.health_tracker.widgets.WaterWidget;
+import com.example.health_tracker.ui.widgets.CaloriesWidget;
+import com.example.health_tracker.ui.widgets.StepsWidget;
+import com.example.health_tracker.ui.widgets.WaterWidget;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private StepsWidget stepsWidget;
     private WaterWidget waterWidget;
+    private CaloriesWidget caloriesWidget;
     private final SharedPreferencesManager sharedPreferencesManager = SharedPreferencesModule.getSharedPreferencesManager();
 
     @Override
@@ -42,29 +42,36 @@ public class MainActivity extends AppCompatActivity {
 
         stepsWidget = new StepsWidget(this);
         waterWidget = new WaterWidget(this);
+        caloriesWidget = new CaloriesWidget(this);
         binding.rootContainer.addView(stepsWidget);
         binding.rootContainer.addView(waterWidget);
+        binding.rootContainer.addView(caloriesWidget);
 
-        sharedPreferencesManager.reset(); // debug
+        binding.btnDebug.setOnClickListener(v -> {
+            sharedPreferencesManager.reset();
+            boolean sensorStatus = sharedPreferencesManager.getSensorStatus();
+            Intent intent = new Intent(this, StepsCounterService.class);
+            if (sensorStatus)
+                stopService(intent);
+            else
+                startService(intent);
+            sharedPreferencesManager.setSensorStatus(!sensorStatus);
+            update();
+            Toast.makeText(this,
+                            "SENSOR " + !sensorStatus,
+                            Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        update();
+    }
 
+    private void update(){
         stepsWidget.update();
         waterWidget.update();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopService(new Intent(this, StepsCounterService.class)); // debug
-        sharedPreferencesManager.setSensorStatus(false);
+        caloriesWidget.update();
     }
 }

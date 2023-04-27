@@ -1,4 +1,4 @@
-package com.example.health_tracker.widgets;
+package com.example.health_tracker.ui.widgets;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -93,12 +93,15 @@ public class WaterWidget extends BaseWidget {
         builder.setView(numberPicker);
         builder.setTitle("Введите размер кружки");
         builder.setCancelable(true);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Добавить", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                cups.add(numberPicker.getValue());
-                Log.d("WATER WIDGET", "CUPS: " + cups.toString());
-                update();
+                int value = numberPicker.getValue();
+                if (value != 0) {
+                    cups.add(value);
+                    Log.d("WATER WIDGET", "CUPS: " + cups.toString());
+                    update();
+                }
             }
         });
         builder.show();

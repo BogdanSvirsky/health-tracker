@@ -1,4 +1,4 @@
-package com.example.health_tracker.widgets;
+package com.example.health_tracker.ui.widgets;
 
 import android.content.Context;
 import android.view.LayoutInflater;
