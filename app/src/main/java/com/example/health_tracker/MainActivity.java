@@ -20,7 +20,9 @@ public class MainActivity extends AppCompatActivity {
     private StepsWidget stepsWidget;
     private WaterWidget waterWidget;
     private CaloriesWidget caloriesWidget;
-    private final SharedPreferencesManager sharedPreferencesManager = SharedPreferencesModule.getSharedPreferencesManager();
+    private final SharedPreferencesManager sharedPreferencesManager =
+            SharedPreferencesModule.getSharedPreferencesManager();
+    private final Intent mStepsService = new Intent(this, StepsCounterService.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         if (!sharedPreferencesManager.getSensorStatus()) {
-            startService(new Intent(this, StepsCounterService.class));
+            startService(mStepsService);
             sharedPreferencesManager.setSensorStatus(true);
         }
 
@@ -50,16 +52,10 @@ public class MainActivity extends AppCompatActivity {
         binding.btnDebug.setOnClickListener(v -> {
             sharedPreferencesManager.reset();
             boolean sensorStatus = sharedPreferencesManager.getSensorStatus();
-            Intent intent = new Intent(this, StepsCounterService.class);
-            if (sensorStatus)
-                stopService(intent);
-            else
-                startService(intent);
-            sharedPreferencesManager.setSensorStatus(!sensorStatus);
             update();
             Toast.makeText(this,
-                            "SENSOR " + !sensorStatus,
-                            Toast.LENGTH_SHORT).show();
+                    "SENSOR " + sensorStatus,
+                    Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -69,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         update();
     }
 
-    private void update(){
+    private void update() {
         stepsWidget.update();
         waterWidget.update();
         caloriesWidget.update();

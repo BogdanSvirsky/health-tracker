@@ -55,7 +55,7 @@ public class StepsCounterService extends Service implements SensorEventListener 
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        currentStepsCount += sensorEvent.values.length;
+        currentStepsCount++;
     }
 
     @Override

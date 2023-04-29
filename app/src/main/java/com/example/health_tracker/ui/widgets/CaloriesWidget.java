@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
 import androidx.annotation.NonNull;
@@ -17,6 +19,7 @@ import com.example.health_tracker.databinding.CaloriesWidgetStartBinding;
 import com.example.health_tracker.singletones.SharedPreferencesModule;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class CaloriesWidget extends BaseWidget {
     private int caloriesCount = 0;
@@ -47,7 +50,8 @@ public class CaloriesWidget extends BaseWidget {
             @Override
             public void onClick(View view) {
                 bottomBinding.recordsContainer.removeView(view);
-                caloriesRecords.remove(view);
+                caloriesRecords.remove((RecordsItem) view); // TODO: app is crashed
+//                Log.d("CALORIES WIDGET", "delete " + view.getValue());
                 update();
             }
         };
@@ -56,10 +60,19 @@ public class CaloriesWidget extends BaseWidget {
     }
 
     public void update() {
-        caloriesCount = sharedPreferencesManager.getCaloriesCount();
+        caloriesCount = 0;
+        for (RecordsItem record: caloriesRecords) {
+            Log.d("CALORIES WIDGET", record.getValue() + "");
+            caloriesCount += record.getValue();
+        }
         startBinding.txtCountCalories.setText(caloriesCount + "");
         baseBinding.txtPercents.setText(String.format("%.1f", (caloriesCount / goal) * 100) + "%");
         baseBinding.progressBar.setProgress((int) ((caloriesCount / goal) * 100));
+        if (caloriesRecords.isEmpty())
+            bottomBinding.txtLastRecords.setVisibility(GONE);
+        else
+            bottomBinding.txtLastRecords.setVisibility(VISIBLE);
+
     }
 
     private void addCalories() {
@@ -83,9 +96,6 @@ public class CaloriesWidget extends BaseWidget {
                                     value
                             )
                     );
-                    caloriesCount += value;
-                    Log.d("CALORIES WIDGET", String.valueOf(caloriesCount));
-                    sharedPreferencesManager.saveCaloriesCount(caloriesCount);
                     update();
                 }
             }

@@ -24,14 +24,23 @@ public class WaterWidget extends BaseWidget {
     private float goal = 2200, currentMLs = 0;
     private ArrayList<Integer> cups = new ArrayList<>();
     private int currentCup = 1;
-    private final SharedPreferencesManager sharedPreferencesManager = SharedPreferencesModule.getSharedPreferencesManager();
+    private final SharedPreferencesManager sharedPreferencesManager =
+            SharedPreferencesModule.getSharedPreferencesManager();
     private boolean isVisible = false;
     private AlertDialog.Builder builder;
 
     public WaterWidget(@NonNull Context context) {
         super(context);
-        startBinding = WaterWidgetStartBinding.inflate(LayoutInflater.from(context), baseBinding.startContent, true);
-        bottomBinding = WaterWidgetBottomBinding.inflate(LayoutInflater.from(context), baseBinding.bottomContent, true);
+        startBinding = WaterWidgetStartBinding.inflate(
+                LayoutInflater.from(context),
+                baseBinding.startContent,
+                true
+        );
+        bottomBinding = WaterWidgetBottomBinding.inflate(
+                LayoutInflater.from(context),
+                baseBinding.bottomContent,
+                true
+        );
 
         cups.add(200);
         cups.add(300);

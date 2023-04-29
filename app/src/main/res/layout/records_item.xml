@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/item_record"
-    android:orientation="horizontal"
     android:paddingHorizontal="16dp"
-    android:paddingVertical="4dp">
+    android:orientation="horizontal"
+    android:paddingVertical="4dp"
+    tools:parentTag="android.widget.LinearLayout">
 
     <TextView
         android:id="@+id/txtCount"
@@ -22,5 +24,4 @@
         android:layout_height="30dp"
         android:paddingStart="4dp"
         android:src="@drawable/delete" />
-
-</LinearLayout>
+</merge>
