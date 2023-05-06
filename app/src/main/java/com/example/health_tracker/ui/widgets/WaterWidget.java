@@ -55,7 +55,7 @@ public class WaterWidget extends BaseWidget {
         bottomBinding.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                currentCup = (int) bottomBinding.radioGroup.indexOfChild(
+                currentCup = bottomBinding.radioGroup.indexOfChild(
                         findViewById(bottomBinding.radioGroup.getCheckedRadioButtonId())
                 );
 

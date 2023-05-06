@@ -9,10 +9,11 @@ import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.health_tracker.singletones.SensorManagerModule;
 import com.example.health_tracker.singletones.SharedPreferencesModule;
 
 public class StepsCounterService extends Service implements SensorEventListener {
-    private SensorManager sensorManager;
+    private SensorManager sensorManager = SensorManagerModule.getSensorManager();
     private Sensor stepsDetectorSensor;
     private static int currentStepsCount;
     private final SharedPreferencesManager sharedPreferencesManager =
@@ -20,7 +21,6 @@ public class StepsCounterService extends Service implements SensorEventListener 
 
     @Override
     public void onCreate() {
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Log.d(
                 "SENSOR",
                 "SENSOR MANAGER IS " + ((sensorManager == null) ? "NULL" : "NOT NULL")

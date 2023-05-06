@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:text="Последние записи"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textSize="20dp" />
 
     <LinearLayout

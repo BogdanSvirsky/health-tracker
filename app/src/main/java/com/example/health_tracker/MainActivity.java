@@ -3,6 +3,7 @@ package com.example.health_tracker;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -22,19 +23,12 @@ public class MainActivity extends AppCompatActivity {
     private CaloriesWidget caloriesWidget;
     private final SharedPreferencesManager sharedPreferencesManager =
             SharedPreferencesModule.getSharedPreferencesManager();
-    private final Intent mStepsService = new Intent(this, StepsCounterService.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        if (!sharedPreferencesManager.getSensorStatus()) {
-            startService(mStepsService);
-            sharedPreferencesManager.setSensorStatus(true);
-        }
-
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED) {
             requestPermissions(
@@ -69,5 +63,11 @@ public class MainActivity extends AppCompatActivity {
         stepsWidget.update();
         waterWidget.update();
         caloriesWidget.update();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stepsWidget.unregisterListener();
     }
 }

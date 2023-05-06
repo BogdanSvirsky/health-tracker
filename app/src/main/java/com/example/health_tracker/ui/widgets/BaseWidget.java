@@ -44,4 +44,6 @@ public class BaseWidget extends CardView {
         setRadius(CORNER_RADIUS);
         setCardElevation(ELEVATION);
     }
+
+    public void update() {}
 }

@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
 import androidx.annotation.NonNull;
@@ -19,7 +16,6 @@ import com.example.health_tracker.databinding.CaloriesWidgetStartBinding;
 import com.example.health_tracker.singletones.SharedPreferencesModule;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class CaloriesWidget extends BaseWidget {
     private int caloriesCount = 0;
@@ -28,7 +24,6 @@ public class CaloriesWidget extends BaseWidget {
     private AlertDialog.Builder builder;
     private CaloriesWidgetStartBinding startBinding;
     private CaloriesWidgetBottomBinding bottomBinding;
-    private OnClickListener onRecordClickListener;
     private SharedPreferencesManager sharedPreferencesManager =
             SharedPreferencesModule.getSharedPreferencesManager();
 
@@ -46,24 +41,21 @@ public class CaloriesWidget extends BaseWidget {
         );
         startBinding.addCalories.setOnClickListener(v -> addCalories());
 
-        onRecordClickListener = new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomBinding.recordsContainer.removeView(view);
-                caloriesRecords.remove((RecordsItem) view); // TODO: app is crashed
-//                Log.d("CALORIES WIDGET", "delete " + view.getValue());
-                update();
-            }
-        };
-
         update();
     }
 
     public void update() {
         caloriesCount = 0;
+        bottomBinding.recordsContainer.removeAllViews();
         for (RecordsItem record: caloriesRecords) {
-            Log.d("CALORIES WIDGET", record.getValue() + "");
-            caloriesCount += record.getValue();
+            if (record.isDeleted()) {
+                caloriesRecords.remove(record);
+            }
+            else {
+                bottomBinding.recordsContainer.addView(record);
+                Log.d("CALORIES WIDGET", record.getValue() + "");
+                caloriesCount += record.getValue();
+            }
         }
         startBinding.txtCountCalories.setText(caloriesCount + "");
         baseBinding.txtPercents.setText(String.format("%.1f", (caloriesCount / goal) * 100) + "%");
@@ -76,6 +68,7 @@ public class CaloriesWidget extends BaseWidget {
     }
 
     private void addCalories() {
+        CaloriesWidget parentView = this;
         builder = new AlertDialog.Builder(getContext());
         NumberPicker numberPicker = new NumberPicker(getContext());
         numberPicker.setMinValue(0);
@@ -92,7 +85,7 @@ public class CaloriesWidget extends BaseWidget {
                             new RecordsItem(
                                     getContext(),
                                     bottomBinding.recordsContainer,
-                                    onRecordClickListener,
+                                    parentView,
                                     value
                             )
                     );
