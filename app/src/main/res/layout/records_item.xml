@@ -22,6 +22,7 @@
         android:textSize="18sp" />
 
     <ImageView
+        android:id="@+id/btnDelete"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:paddingStart="4dp"

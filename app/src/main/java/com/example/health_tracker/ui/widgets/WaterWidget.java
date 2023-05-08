@@ -15,19 +15,22 @@ import com.example.health_tracker.SharedPreferencesManager;
 import com.example.health_tracker.databinding.WaterWidgetBottomBinding;
 import com.example.health_tracker.databinding.WaterWidgetStartBinding;
 import com.example.health_tracker.singletones.SharedPreferencesModule;
+import com.example.health_tracker.ui.record.RecordsContainer;
 
 import java.util.ArrayList;
 
 public class WaterWidget extends BaseWidget {
     private final WaterWidgetStartBinding startBinding;
     private final WaterWidgetBottomBinding bottomBinding;
-    private float goal = 2200, currentMLs = 0;
+    private float goal = 2200;
+    private int currentMLs = 0;
     private ArrayList<Integer> cups = new ArrayList<>();
     private int currentCup = 1;
     private final SharedPreferencesManager sharedPreferencesManager =
             SharedPreferencesModule.getSharedPreferencesManager();
     private boolean isVisible = false;
     private AlertDialog.Builder builder;
+    private final RecordsContainer waterRecords;
 
     public WaterWidget(@NonNull Context context) {
         super(context);
@@ -42,6 +45,8 @@ public class WaterWidget extends BaseWidget {
                 true
         );
 
+        waterRecords = new RecordsContainer(context);
+
         cups.add(200);
         cups.add(300);
         cups.add(400);
@@ -49,7 +54,7 @@ public class WaterWidget extends BaseWidget {
         startBinding.addCup.setOnClickListener(v -> {
             currentMLs += cups.get(currentCup);
             sharedPreferencesManager.saveMLsCount(cups.get(currentCup));
-            update();
+            waterRecords.addNewRecord(cups.get(currentCup));
         });
 
         bottomBinding.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -64,7 +69,7 @@ public class WaterWidget extends BaseWidget {
         });
 
         startBinding.btnSettings.setOnClickListener(v -> {
-            bottomBinding.scrollContent.setVisibility((isVisible)? VISIBLE: GONE);
+            bottomBinding.scrollContent.setVisibility((isVisible) ? VISIBLE : GONE);
             isVisible = !isVisible;
             update();
         });
@@ -72,6 +77,11 @@ public class WaterWidget extends BaseWidget {
         bottomBinding.scrollContent.setVisibility(GONE);
 
         bottomBinding.btnAddNewCup.setOnClickListener(v -> addNewCup());
+
+        bottomBinding.content.addView(waterRecords.getLastRecordsView());
+        bottomBinding.content.addView(waterRecords.getBtnAddRecord());
+
+        waterRecords.setOnRecordsChangeListener(c -> update());
 
         update();
     }
@@ -81,12 +91,12 @@ public class WaterWidget extends BaseWidget {
     }
 
     public void update() {
-        currentMLs = sharedPreferencesManager.getMLsCount();
-        startBinding.txtCountMLs.setText((int) currentMLs + "");
+        currentMLs = waterRecords.getRecordsSum();
+        startBinding.txtCountMLs.setText(String.valueOf(currentMLs));
         baseBinding.txtPercents.setText(String.format("%.1f", (currentMLs / goal) * 100) + "%");
         baseBinding.progressBar.setProgress((int) ((currentMLs / goal) * 100));
         bottomBinding.radioGroup.removeAllViews();
-        for (int cup: cups) {
+        for (int cup : cups) {
             RadioButton radioButton = new RadioButton(getContext());
             radioButton.setText(cup + " ml");
             bottomBinding.radioGroup.addView(radioButton);
@@ -108,11 +118,16 @@ public class WaterWidget extends BaseWidget {
                 int value = numberPicker.getValue();
                 if (value != 0) {
                     cups.add(value);
-                    Log.d("WATER WIDGET", "CUPS: " + cups.toString());
+                    Log.d("WATER WIDGET", "CUPS: " + cups);
                     update();
                 }
             }
         });
         builder.show();
+    }
+
+    public void reset(){
+        // TODO: create a streak of successful days
+        waterRecords.clear();
     }
 }

@@ -16,10 +16,10 @@ import com.example.health_tracker.singletones.SensorManagerModule;
 
 public class StepsWidget extends BaseWidget implements SensorEventListener {
     private StepsWidgetBinding binding;
-    private SensorManager sensorManager = SensorManagerModule.getSensorManager();
-    private Sensor stepCounterSensor;
-    private int goal = 10000;
-    private float countSteps = 0, startSteps = 0;
+    private final SensorManager sensorManager = SensorManagerModule.getSensorManager();
+    private final Sensor stepCounterSensor;
+    private float goal = 10000;
+    private int currentStepsCount = 0, previousStepCount = 0;
     private boolean isReset = false;
 
     public void setGoal(int goal) {
@@ -49,21 +49,25 @@ public class StepsWidget extends BaseWidget implements SensorEventListener {
     }
 
     public void update() {
-        binding.txtCountSteps.setText(countSteps + "");
-        binding.txtCountKMs.setText(String.format("это %.1f км", ((float) countSteps) / goal) + "");
-        baseBinding.txtPercents.setText(String.format("%.1f", (((float) countSteps) / goal) * 100) + "%");
-        baseBinding.progressBar.setProgress((int) ((countSteps / goal) * 100));
+        binding.txtCountSteps.setText(String.valueOf(currentStepsCount));
+        binding.txtCountKMs.setText(String.format("это %.1f км",  currentStepsCount / goal) + "");
+        baseBinding.txtPercents.setText(String.format("%.1f", (currentStepsCount / goal) * 100) + "%");
+        baseBinding.progressBar.setProgress((int) ((currentStepsCount / goal) * 100));
     }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        float currentStepsCount = sensorEvent.values[0];
-        if (!isReset) {
+        int sensorStepsCount = (int) sensorEvent.values[0];
+        if (isReset){
+            if (previousStepCount == 0)
+                currentStepsCount = sensorStepsCount;
+            else
+                currentStepsCount = sensorStepsCount - previousStepCount;
+        } else {
+            previousStepCount = sensorStepsCount;
+            currentStepsCount = 0;
             isReset = true;
-            startSteps = currentStepsCount;
         }
-        else
-            countSteps = currentStepsCount - startSteps;
     }
 
     @Override

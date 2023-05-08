@@ -1,9 +1,7 @@
 package com.example.health_tracker;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -69,5 +67,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stepsWidget.unregisterListener();
+    }
+
+    private void reset(){
+        stepsWidget.reset();
+        waterWidget.reset();
+        caloriesWidget.reset();
     }
 }

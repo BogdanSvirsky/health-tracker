@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollContent"
-    android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:padding="5dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <HorizontalScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:id="@+id/scrollContent">
 
-        <RadioGroup
-            android:id="@+id/radioGroup"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btnAddNewCup"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="+ НОВАЯ КРУЖКА" />
-    </LinearLayout>
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
 
-</HorizontalScrollView>
+            <Button
+                android:id="@+id/btnAddNewCup"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="+ НОВАЯ КРУЖКА" />
+        </LinearLayout>
+    </HorizontalScrollView>
+</LinearLayout>

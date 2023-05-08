@@ -3,7 +3,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingStart="10dp">
+    android:paddingStart="10dp"
+    android:id="@+id/content">
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,11 +28,4 @@
         android:layout_gravity="left"
         android:paddingStart="4dp"
         android:text="каллорий" />
-
-    <Button
-        android:id="@+id/addCalories"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Добавить запись +"
-        android:textSize="12dp" />
 </LinearLayout>

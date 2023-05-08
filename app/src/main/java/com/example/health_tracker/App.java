@@ -6,7 +6,6 @@ import com.example.health_tracker.singletones.SensorManagerModule;
 import com.example.health_tracker.singletones.SharedPreferencesModule;
 
 public class App extends Application {
-
     @Override
     public void onCreate() {
         super.onCreate();
