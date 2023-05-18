@@ -3,6 +3,7 @@ package com.example.health_tracker.ui.activities;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -54,27 +55,30 @@ public class MainActivity extends AppCompatActivity {
         binding.rootContainer.addView(stepsWidget);
         binding.rootContainer.addView(waterWidget);
         binding.rootContainer.addView(caloriesWidget);
-        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        pendingIntent = PendingIntent.getService(
-                this,
-                0,
-                new Intent(this, SaveService.class),
-                PendingIntent.FLAG_IMMUTABLE
-        );
-        Calendar calendar = Calendar.getInstance();
-        Log.d("HEALTH TRACKER", calendar.getTimeInMillis() + "");
-        calendar.set(Calendar.HOUR, 0);
-        calendar.set(Calendar.MINUTE, 15);
-        calendar.set(Calendar.SECOND, 0);
-        Log.d("HEALTH TRACKER", calendar.getTimeInMillis() + "");
-        alarmManager.setRepeating(
-                AlarmManager.RTC,
-                calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY,
-                pendingIntent
-        );
+
+        binding.btnEscape.setOnClickListener(view -> setupAlarm());
 
         startActivity(LoginActivity.getInstance(this));
+    }
+
+    private void setupAlarm() {
+        //startForegroundService(new Intent(this, SaveService.class));
+
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, SaveService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+        );
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + 10_000,
+                30_000, pendingIntent);
+
     }
 
     @Override
