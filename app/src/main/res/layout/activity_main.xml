@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp"
-    tools:context=".MainActivity">
+    tools:context=".ui.activities.MainActivity">
 
     <LinearLayout
         android:id="@+id/rootContainer"
@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/btnDebug"
+            android:id="@+id/btnEscape"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="debug" />

@@ -1,18 +1,29 @@
-package com.example.health_tracker;
+package com.example.health_tracker.ui.activities;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.example.health_tracker.SaveService;
+import com.example.health_tracker.SharedPreferencesManager;
+import com.example.health_tracker.Utils;
 import com.example.health_tracker.databinding.ActivityMainBinding;
 import com.example.health_tracker.singletones.SharedPreferencesModule;
 import com.example.health_tracker.ui.widgets.CaloriesWidget;
 import com.example.health_tracker.ui.widgets.StepsWidget;
 import com.example.health_tracker.ui.widgets.WaterWidget;
+
+import java.util.Calendar;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -21,10 +32,13 @@ public class MainActivity extends AppCompatActivity {
     private CaloriesWidget caloriesWidget;
     private final SharedPreferencesManager sharedPreferencesManager =
             SharedPreferencesModule.getSharedPreferencesManager();
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         if (ContextCompat.checkSelfPermission(this,
@@ -40,15 +54,27 @@ public class MainActivity extends AppCompatActivity {
         binding.rootContainer.addView(stepsWidget);
         binding.rootContainer.addView(waterWidget);
         binding.rootContainer.addView(caloriesWidget);
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        pendingIntent = PendingIntent.getService(
+                this,
+                0,
+                new Intent(this, SaveService.class),
+                PendingIntent.FLAG_IMMUTABLE
+        );
+        Calendar calendar = Calendar.getInstance();
+        Log.d("HEALTH TRACKER", calendar.getTimeInMillis() + "");
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 15);
+        calendar.set(Calendar.SECOND, 0);
+        Log.d("HEALTH TRACKER", calendar.getTimeInMillis() + "");
+        alarmManager.setRepeating(
+                AlarmManager.RTC,
+                calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+        );
 
-        binding.btnDebug.setOnClickListener(v -> {
-            sharedPreferencesManager.reset();
-            boolean sensorStatus = sharedPreferencesManager.getSensorStatus();
-            update();
-            Toast.makeText(this,
-                    "SENSOR " + sensorStatus,
-                    Toast.LENGTH_SHORT).show();
-        });
+        startActivity(LoginActivity.getInstance(this));
     }
 
     @Override
@@ -67,11 +93,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stepsWidget.unregisterListener();
-    }
-
-    private void reset(){
-        stepsWidget.reset();
-        waterWidget.reset();
-        caloriesWidget.reset();
     }
 }

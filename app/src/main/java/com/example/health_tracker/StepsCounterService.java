@@ -39,12 +39,10 @@ public class StepsCounterService extends Service implements SensorEventListener 
 
     @Override
     public void onDestroy() {
-        sharedPreferencesManager.saveStepsCount(currentStepsCount);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        currentStepsCount = sharedPreferencesManager.getStepsCount();
         return START_STICKY;
     }
 

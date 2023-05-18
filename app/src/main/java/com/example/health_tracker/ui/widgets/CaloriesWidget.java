@@ -8,6 +8,7 @@ import android.widget.NumberPicker;
 
 import androidx.annotation.NonNull;
 
+import com.example.health_tracker.ui.record.OnRecordsChangeListener;
 import com.example.health_tracker.ui.record.RecordsContainer;
 import com.example.health_tracker.ui.record.RecordsItem;
 import com.example.health_tracker.SharedPreferencesManager;
@@ -40,16 +41,24 @@ public class CaloriesWidget extends BaseWidget {
                 true
         );
 
-        caloriesRecords = new RecordsContainer(context);
+        caloriesRecords = new RecordsContainer(context, SharedPreferencesManager.KEYS.CALORIES);
 
         bottomBinding.content.addView(caloriesRecords.getLastRecordsView());
         bottomBinding.content.addView(caloriesRecords.getBtnAddRecord());
-        caloriesRecords.setOnRecordsChangeListener(c -> update());
+        caloriesRecords.setOnRecordsChangeListener(new OnRecordsChangeListener() {
+            @Override
+            public void onChange(RecordsContainer recordsContainer) {
+                super.onChange(recordsContainer);
+                update();
+            }
+        });
 
         update();
     }
 
     public void update() {
+        caloriesRecords.update();
+        goal = (float) sharedPreferencesManager.getGoal(SharedPreferencesManager.KEYS.CALORIES);
         caloriesCount = caloriesRecords.getRecordsSum();
         startBinding.txtCountCalories.setText(caloriesCount + "");
         baseBinding.txtPercents.setText(String.format("%.1f", (caloriesCount / goal) * 100) + "%");
@@ -58,6 +67,5 @@ public class CaloriesWidget extends BaseWidget {
 
     public void reset() {
         // TODO: create a streak of successful days
-        caloriesRecords.clear();
     }
 }

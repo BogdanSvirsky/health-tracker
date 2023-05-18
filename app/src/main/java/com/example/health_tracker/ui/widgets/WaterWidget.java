@@ -15,6 +15,7 @@ import com.example.health_tracker.SharedPreferencesManager;
 import com.example.health_tracker.databinding.WaterWidgetBottomBinding;
 import com.example.health_tracker.databinding.WaterWidgetStartBinding;
 import com.example.health_tracker.singletones.SharedPreferencesModule;
+import com.example.health_tracker.ui.record.OnRecordsChangeListener;
 import com.example.health_tracker.ui.record.RecordsContainer;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class WaterWidget extends BaseWidget {
                 true
         );
 
-        waterRecords = new RecordsContainer(context);
+        waterRecords = new RecordsContainer(context, SharedPreferencesManager.KEYS.WATER);
 
         cups.add(200);
         cups.add(300);
@@ -53,7 +54,10 @@ public class WaterWidget extends BaseWidget {
 
         startBinding.addCup.setOnClickListener(v -> {
             currentMLs += cups.get(currentCup);
-            sharedPreferencesManager.saveMLsCount(cups.get(currentCup));
+            sharedPreferencesManager.saveCount(
+                    SharedPreferencesManager.KEYS.WATER,
+                    cups.get(currentCup)
+            );
             waterRecords.addNewRecord(cups.get(currentCup));
         });
 
@@ -81,16 +85,20 @@ public class WaterWidget extends BaseWidget {
         bottomBinding.content.addView(waterRecords.getLastRecordsView());
         bottomBinding.content.addView(waterRecords.getBtnAddRecord());
 
-        waterRecords.setOnRecordsChangeListener(c -> update());
+        waterRecords.setOnRecordsChangeListener(new OnRecordsChangeListener() {
+            @Override
+            public void onChange(RecordsContainer recordsContainer) {
+                super.onChange(recordsContainer);
+                update();
+            }
+        });
 
         update();
     }
 
-    public void setGoal(int goal) {
-        this.goal = goal;
-    }
-
     public void update() {
+        waterRecords.update();
+        goal = (float) sharedPreferencesManager.getGoal(SharedPreferencesManager.KEYS.WATER);
         currentMLs = waterRecords.getRecordsSum();
         startBinding.txtCountMLs.setText(String.valueOf(currentMLs));
         baseBinding.txtPercents.setText(String.format("%.1f", (currentMLs / goal) * 100) + "%");
@@ -128,6 +136,5 @@ public class WaterWidget extends BaseWidget {
 
     public void reset(){
         // TODO: create a streak of successful days
-        waterRecords.clear();
     }
 }

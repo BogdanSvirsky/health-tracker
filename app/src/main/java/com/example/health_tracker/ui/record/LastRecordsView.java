@@ -22,4 +22,8 @@ public class LastRecordsView extends LinearLayout {
     public void removeRecord(RecordsItem record) {
         binding.recordsContainer.removeView(record);
     }
+
+    public void clear() {
+        binding.recordsContainer.removeAllViews();
+    }
 }

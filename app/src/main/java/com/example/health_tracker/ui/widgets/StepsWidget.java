@@ -10,21 +10,20 @@ import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
 
-import com.example.health_tracker.StepsCounterService;
+import com.example.health_tracker.SharedPreferencesManager;
 import com.example.health_tracker.databinding.StepsWidgetBinding;
 import com.example.health_tracker.singletones.SensorManagerModule;
+import com.example.health_tracker.singletones.SharedPreferencesModule;
 
 public class StepsWidget extends BaseWidget implements SensorEventListener {
     private StepsWidgetBinding binding;
     private final SensorManager sensorManager = SensorManagerModule.getSensorManager();
+    private final SharedPreferencesManager sharedPreferencesManager
+            = SharedPreferencesModule.getSharedPreferencesManager();
     private final Sensor stepCounterSensor;
-    private float goal = 10000;
+    private float goal;
     private int currentStepsCount = 0, previousStepCount = 0;
     private boolean isReset = false;
-
-    public void setGoal(int goal) {
-        this.goal = goal;
-    }
 
     public StepsWidget(@NonNull Context context) {
         super(context);
@@ -49,6 +48,8 @@ public class StepsWidget extends BaseWidget implements SensorEventListener {
     }
 
     public void update() {
+        goal = (float) sharedPreferencesManager.getGoal(SharedPreferencesManager.KEYS.STEPS);
+        currentStepsCount = sharedPreferencesManager.getCount(SharedPreferencesManager.KEYS.STEPS);
         binding.txtCountSteps.setText(String.valueOf(currentStepsCount));
         binding.txtCountKMs.setText(String.format("это %.1f км",  currentStepsCount / goal) + "");
         baseBinding.txtPercents.setText(String.format("%.1f", (currentStepsCount / goal) * 100) + "%");
@@ -58,24 +59,15 @@ public class StepsWidget extends BaseWidget implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         int sensorStepsCount = (int) sensorEvent.values[0];
-        if (isReset){
-            if (previousStepCount == 0)
-                currentStepsCount = sensorStepsCount;
-            else
-                currentStepsCount = sensorStepsCount - previousStepCount;
-        } else {
-            previousStepCount = sensorStepsCount;
-            currentStepsCount = 0;
-            isReset = true;
-        }
+        if (previousStepCount == 0)
+            currentStepsCount = sensorStepsCount;
+        else
+            currentStepsCount = sensorStepsCount - previousStepCount;
+        sharedPreferencesManager.saveCount(SharedPreferencesManager.KEYS.STEPS, currentStepsCount);
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {}
-
-    public void reset() {
-        isReset = false;
-    }
 
     public void unregisterListener() {
         sensorManager.unregisterListener(this);
