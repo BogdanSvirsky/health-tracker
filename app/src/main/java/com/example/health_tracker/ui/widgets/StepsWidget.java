@@ -21,9 +21,6 @@ public class StepsWidget extends BaseWidget implements SensorEventListener {
     private final SharedPreferencesManager sharedPreferencesManager
             = SharedPreferencesModule.getSharedPreferencesManager();
     private final Sensor stepCounterSensor;
-    private float goal;
-    private int currentStepsCount = 0, previousStepCount = 0;
-    private boolean isReset = false;
 
     public StepsWidget(@NonNull Context context) {
         super(context);
@@ -48,8 +45,12 @@ public class StepsWidget extends BaseWidget implements SensorEventListener {
     }
 
     public void update() {
-        goal = (float) sharedPreferencesManager.getGoal(SharedPreferencesManager.KEYS.STEPS);
-        currentStepsCount = sharedPreferencesManager.getCount(SharedPreferencesManager.KEYS.STEPS);
+        final float goal = (float) sharedPreferencesManager.getGoal(
+                SharedPreferencesManager.KEYS.STEPS
+        );
+        final int currentStepsCount = sharedPreferencesManager.getCount(
+                SharedPreferencesManager.KEYS.STEPS
+        );
         binding.txtCountSteps.setText(String.valueOf(currentStepsCount));
         binding.txtCountKMs.setText(String.format("это %.1f км",  currentStepsCount / goal) + "");
         baseBinding.txtPercents.setText(String.format("%.1f", (currentStepsCount / goal) * 100) + "%");
@@ -59,10 +60,15 @@ public class StepsWidget extends BaseWidget implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         int sensorStepsCount = (int) sensorEvent.values[0];
-        if (previousStepCount == 0)
-            currentStepsCount = sensorStepsCount;
-        else
+        int previousStepCount = sharedPreferencesManager.getPreviousSteps();
+        int currentStepsCount;
+        if (previousStepCount == 0) {
+            sharedPreferencesManager.setPreviousSteps(sensorStepsCount);
+            currentStepsCount = 0;
+        }
+        else {
             currentStepsCount = sensorStepsCount - previousStepCount;
+        }
         sharedPreferencesManager.saveCount(SharedPreferencesManager.KEYS.STEPS, currentStepsCount);
     }
 

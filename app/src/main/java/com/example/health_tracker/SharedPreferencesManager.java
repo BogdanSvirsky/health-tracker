@@ -16,9 +16,12 @@ public class SharedPreferencesManager {
             CALORIES_GOAL_KEY = "CALORIES_GOAL",
             CALORIES_RECORDS_KEY = "CALORIES_RECORDS",
             WATER_RECORDS_KEY = "WATER_RECORDS",
-            LOG_STATUS_KEY = "LOG_STATUS";
+            LOG_STATUS_KEY = "LOG_STATUS",
+            PREVIOUS_STEPS_KEY = "PREVIOUS_STEPS";
     private SharedPreferences sharedPreferences;
+
     public enum KEYS {CALORIES, WATER, STEPS}
+
     private enum TYPES {GOAL, COUNT, RECORDS}
 
     public SharedPreferencesManager(Context context) {
@@ -124,9 +127,21 @@ public class SharedPreferencesManager {
         return sharedPreferences.getBoolean(LOG_STATUS_KEY, false);
     }
 
+    public void setPreviousSteps(final int value) {
+        sharedPreferences.edit()
+                .putInt(PREVIOUS_STEPS_KEY, value)
+                .apply();
+    }
+
+    public int getPreviousSteps() {
+        return sharedPreferences.getInt(PREVIOUS_STEPS_KEY, 0);
+    }
+
     public void reset() {
         sharedPreferences.edit().putInt(STEPS_KEY, 0).apply();
         sharedPreferences.edit().putString(CALORIES_RECORDS_KEY, "").apply();
         sharedPreferences.edit().putString(WATER_RECORDS_KEY, "").apply();
+        sharedPreferences.edit().putInt(PREVIOUS_STEPS_KEY, 0).apply();
+        Log.d("SHARED PREFS", "RESET IS OVER ");
     }
 }

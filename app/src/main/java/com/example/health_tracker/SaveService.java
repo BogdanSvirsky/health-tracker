@@ -21,7 +21,7 @@ public class SaveService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("TAG", "onCreate");
+        Log.d("SAVE SERVICE", "onCreate");
         if (Build.VERSION.SDK_INT >= 26) {
             String CHANNEL_ID = "my_channel_01";
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
@@ -47,7 +47,7 @@ public class SaveService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // TODO: there will be a post-request to a server
-        Log.d("TAG", "onStartCommand");
+        Log.d("SAVE SERVICE", "onStartCommand");
         sharedPreferencesManager.reset();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -55,6 +55,6 @@ public class SaveService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("TAG", "onDestroy");
+        Log.d("SAVE SERVICE", "onDestroy");
     }
 }
